@@ -5692,6 +5692,10 @@ mapbox-gl@^0.47.0:
     tinyqueue "^1.1.0"
     vt-pbf "^3.0.1"
 
+mapbox-omt-lang@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/mapbox-omt-lang/-/mapbox-omt-lang-1.1.0.tgz#6a4beb3ec1dd3ca62f6efd7425bfe862d218994e"
+
 marked@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/marked/-/marked-0.4.0.tgz#9ad2c2a7a1791f10a852e0112f77b571dce10c66"
