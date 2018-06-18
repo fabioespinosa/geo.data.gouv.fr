@@ -59,7 +59,11 @@ class DatasetPage extends React.Component {
     }),
 
     datagouvPublication: PropTypes.shape({
-      remoteId: PropTypes.isRequired
+      remoteId: PropTypes.string.isRequired
+    }),
+
+    datagouvDataset: PropTypes.shape({
+      organization: PropTypes.object.isRequired
     }),
 
     t: PropTypes.func.isRequired,
@@ -68,36 +72,36 @@ class DatasetPage extends React.Component {
 
   static defaultProps = {
     dataset: null,
-    datagouvPublication: null
+    datagouvPublication: null,
+    datagouvDataset: null
   }
 
   static async getInitialProps({query}) {
-    const [dataset, publications] = await Promise.all([
-      _get(`${GEODATA_API_URL}/records/${query.did}`),
-      _get(`${GEODATA_API_URL}/records/${query.did}/publications`)
-    ])
+    const fetchDatagouv = async () => {
+      const publications = await _get(`${GEODATA_API_URL}/records/${query.did}/publications`)
+      const datagouvPublication = publications.find(p => p.target === 'dgv')
 
-    const datagouvPublication = publications.find(p => p.target === 'dgv')
+      if (datagouvPublication && datagouvPublication.remoteId) {
+        const datagouvDataset = await _get(`${DATAGOUV_API_URL}/datasets/${datagouvPublication.remoteId}/`)
+
+        return {
+          datagouvPublication,
+          datagouvDataset
+        }
+      }
+
+      return {datagouvPublication}
+    }
+
+    const [dataset, {datagouvPublication, datagouvDataset}] = await Promise.all([
+      _get(`${GEODATA_API_URL}/records/${query.did}`),
+      fetchDatagouv()
+    ])
 
     return {
       dataset,
-      datagouvPublication
-    }
-  }
-
-  state = {
-    datagouvDatasetPromise: null
-  }
-
-  componentDidMount() {
-    const {datagouvPublication} = this.props
-
-    // Let’s not depend too much on data.gouv.fr’s availability, so we’re
-    // fetching this after the page has loaded.
-    if (datagouvPublication && datagouvPublication.remoteId) {
-      this.setState(() => ({
-        datagouvDatasetPromise: _get(`${DATAGOUV_API_URL}/datasets/${datagouvPublication.remoteId}/`)
-      }))
+      datagouvPublication,
+      datagouvDataset
     }
   }
 
@@ -108,8 +112,7 @@ class DatasetPage extends React.Component {
       metadata,
       dataset,
       organizations
-    }, datagouvPublication, t, tReady} = this.props
-    const {datagouvDatasetPromise} = this.state
+    }, datagouvPublication, datagouvDataset, t, tReady} = this.props
 
     const contacts = uniqWith(metadata.contacts.map(contact => ({
       ...contact,
@@ -136,9 +139,9 @@ class DatasetPage extends React.Component {
               <Container fluid>
                 <div className='container'>
                   <div className='left'>
-                    {datagouvPublication && (
+                    {datagouvDataset && (
                       <Box title={t('blocks.producer')}>
-                        <Producer promise={datagouvDatasetPromise} />
+                        <Producer producer={datagouvDataset.organization} />
                       </Box>
                     )}
 
