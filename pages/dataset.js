@@ -4,6 +4,7 @@ import getConfig from 'next/config'
 import {uniqWith, isEqual, flowRight} from 'lodash'
 
 import {_get} from '../lib/fetch'
+import getSchemaOrg from '../lib/schema-org/dataset'
 
 import attachI18n from '../components/hoc/attach-i18n'
 import attachSession from '../components/hoc/attach-session'
@@ -30,6 +31,7 @@ import Links from '../components/dataset/links'
 import Metadata from '../components/dataset/metadata'
 
 const {publicRuntimeConfig: {
+  PUBLIC_URL,
   GEODATA_API_URL,
   DATAGOUV_API_URL
 }} = getConfig()
@@ -62,6 +64,8 @@ class DatasetPage extends React.Component {
       remoteId: PropTypes.isRequired
     }),
 
+    pageUrl: PropTypes.string.isRequired,
+
     t: PropTypes.func.isRequired,
     tReady: PropTypes.bool.isRequired
   }
@@ -71,7 +75,7 @@ class DatasetPage extends React.Component {
     datagouvPublication: null
   }
 
-  static async getInitialProps({query}) {
+  static async getInitialProps({req, query, asPath}) {
     const [dataset, publications] = await Promise.all([
       _get(`${GEODATA_API_URL}/records/${query.did}`),
       _get(`${GEODATA_API_URL}/records/${query.did}/publications`)
@@ -80,6 +84,7 @@ class DatasetPage extends React.Component {
     const datagouvPublication = publications.find(p => p.target === 'dgv')
 
     return {
+      pageUrl: `${PUBLIC_URL}/${req.languages[0]}${asPath}`,
       dataset,
       datagouvPublication
     }
@@ -108,7 +113,7 @@ class DatasetPage extends React.Component {
       metadata,
       dataset,
       organizations
-    }, datagouvPublication, t, tReady} = this.props
+    }, pageUrl, datagouvPublication, t, tReady} = this.props
     const {datagouvDatasetPromise} = this.state
 
     const contacts = uniqWith(metadata.contacts.map(contact => ({
@@ -124,6 +129,14 @@ class DatasetPage extends React.Component {
       <Page ready={tReady}>
         {() => (
           <React.Fragment>
+            <script type='application/ld+json'
+              dangerouslySetInnerHTML={{ // eslint-disable-line react/no-danger
+                __html: JSON.stringify(
+                  getSchemaOrg(recordId, pageUrl, metadata, dataset.distributions)
+                )
+              }}
+            />
+
             <Meta
               title={metadata.title}
               description={metadata.description}
