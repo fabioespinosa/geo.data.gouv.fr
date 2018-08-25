@@ -37,7 +37,7 @@ module.exports = withConfig({
     if (!dev && !isServer) {
       config.optimization.splitChunks.cacheGroups.shared = {
         name: 'commons',
-        test: m => m.context && commonDependencies.some(c => m.context.includes(c))
+        test: m => m.resource && commonDependencies.some(c => m.resource.includes(c))
       }
 
       config.plugins.push(new BundleAnalyzerPlugin({
