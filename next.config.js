@@ -3,13 +3,15 @@ const webpack = require('webpack')
 const nextRuntimeDotenv = require('next-runtime-dotenv')
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
 
-// The following dependencies will be pushed to the commons.js bundle
-const commonDependencies = [
-  '/node_modules/next/',
+// The following modules will be pushed to the commons.js bundle
+const commonModules = [
+  '/node_modules/fbjs/',
   '/node_modules/lodash-es/',
   '/node_modules/marked/',
+  '/node_modules/next/',
   '/node_modules/react/',
   '/node_modules/react-dom/',
+  '/node_modules/react-loadable/',
 
   '/components/hoc/',
 
@@ -37,7 +39,9 @@ module.exports = withConfig({
     if (!dev && !isServer) {
       config.optimization.splitChunks.cacheGroups.shared = {
         name: 'commons',
-        test: m => m.resource && commonDependencies.some(c => m.resource.includes(c))
+        test: m => m.resource && commonModules.some(c =>
+          m.resource.startsWith(join(__dirname, c))
+        )
       }
 
       config.plugins.push(new BundleAnalyzerPlugin({
