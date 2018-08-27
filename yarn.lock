@@ -6297,9 +6297,9 @@ next-runtime-dotenv@^1.0.1:
   dependencies:
     dotenv "^5.0.1"
 
-next@^7.0.0-canary.2:
-  version "7.0.0-canary.2"
-  resolved "https://registry.yarnpkg.com/next/-/next-7.0.0-canary.2.tgz#2e79d8d49d54764c1997271369d1adeb402c4b7b"
+next@^7.0.0-canary.3:
+  version "7.0.0-canary.3"
+  resolved "https://registry.yarnpkg.com/next/-/next-7.0.0-canary.3.tgz#c26b5149b7124aef02f51b96d252ed7f61ecaecf"
   dependencies:
     "@babel/core" "7.0.0-rc.1"
     "@babel/plugin-proposal-class-properties" "7.0.0-rc.1"
@@ -6340,7 +6340,6 @@ next@^7.0.0-canary.2:
     prop-types "15.6.0"
     prop-types-exact "1.1.1"
     react-error-overlay "4.0.0"
-    react-lifecycles-compat "3.0.4"
     react-loadable "5.4.0"
     recursive-copy "2.0.6"
     resolve "1.5.0"
@@ -7337,10 +7336,6 @@ react-is@^16.3.2:
 react-is@^16.4.2:
   version "16.4.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.2.tgz#84891b56c2b6d9efdee577cc83501dfc5ecead88"
-
-react-lifecycles-compat@3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 
 react-loadable@5.4.0:
   version "5.4.0"
